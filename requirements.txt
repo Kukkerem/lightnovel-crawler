@@ -14,3 +14,5 @@ WeasyPrint==45
 # Bot requirements
 python-telegram-bot==1.2.3
 PyDrive==1.2.1
+slackclient==2.0.1
+discord.py==1.1.1
