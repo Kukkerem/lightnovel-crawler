@@ -269,7 +269,15 @@ class TelegramBot:
             'You can only send /cancel to stop this session.'
         )
 
-        app.search_novel()
+        try:
+            app.search_novel()
+        except Exception as e:
+            if "No results" in str(e):
+                update.message.reply_text(str(e))
+                return self.destroy_app(bot, update, user_data)
+           else:
+               raise
+
         return self.show_novel_selection(bot, update, user_data)
     # end def
 
