@@ -275,8 +275,8 @@ class TelegramBot:
             if "No results" in str(e):
                 update.message.reply_text(str(e))
                 return self.destroy_app(bot, update, user_data)
-           else:
-               raise
+            else:
+                raise
 
         return self.show_novel_selection(bot, update, user_data)
     # end def
