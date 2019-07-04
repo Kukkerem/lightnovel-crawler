@@ -6,7 +6,7 @@ RUN pip install pip --upgrade
 COPY requirements.txt /
 RUN pip install -r requirements.txt
 
-COPY src ./
+COPY src ./src/
 COPY .env.example .env
 COPY __main__.py .
 
