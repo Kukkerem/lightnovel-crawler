@@ -166,7 +166,7 @@ class TelegramBot:
         return 'handle_novel_url'
     # end def
 
-    ef handle_novel_url(self, bot, update, user_data):
+    def handle_novel_url(self, bot, update, user_data):
         if user_data.get('job'):
             app = user_data.get('app')
             job = user_data.get('job')
