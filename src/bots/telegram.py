@@ -179,7 +179,7 @@ class TelegramBot:
         else:
             if user_data.get('app'):
                 app = user_data.get('app')
-            else :
+            else:
                 app = App()
                 app.initialize()
                 user_data['app'] = app
@@ -211,7 +211,7 @@ class TelegramBot:
 
             update.message.reply_text('Got your query text')
             return self.show_crawlers_to_search(bot, update, user_data)
-        #end if
+        # end if
     # end def
 
     def show_crawlers_to_search(self, bot, update, user_data):
