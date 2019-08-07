@@ -92,8 +92,6 @@ class MtledNovelsCrawler(Crawler):
 
         if soup.h1.text.strip():
             chapter['title'] = soup.h1.text.strip()
-        else:
-            chapter['title'] = chapter['title']
         # end if
 
         self.blacklist_patterns = [

@@ -94,8 +94,6 @@ class NovelPlanetCrawler(Crawler):
         else:
             if chapter['title'].startswith('Read'):
                 chapter['title'].replace('Read Novel ', '')
-            else:
-                chapter['title'] = chapter['title']
             # end if
         # end if
         for ads in contents.findAll('div', {"style": 'text-align: center; margin-bottom: 10px'}):

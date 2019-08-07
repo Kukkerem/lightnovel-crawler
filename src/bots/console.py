@@ -278,10 +278,8 @@ class ConsoleBot:
         # end if
 
         output_path = os.path.abspath(output_path)
-        if os.path.exists(output_path):
-            if self.force_replace_old():
-                shutil.rmtree(output_path, ignore_errors=True)
-            # end if
+        if os.path.exists(output_path) and self.force_replace_old():
+            shutil.rmtree(output_path, ignore_errors=True)
         # end if
         os.makedirs(output_path, exist_ok=True)
 

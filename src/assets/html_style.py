@@ -20,7 +20,6 @@ def _minify(css):
     # preserve IE<6 comment hack
     # css = re.sub(r'\s*/\*\s*\*/', "$$HACK1$$", css)
     css = re.sub(r'/\*[\s\S]*?\*/', "", css)
-    # css = css.replace("$$HACK1$$", '/**/')  # preserve IE<6 comment hack
 
     # url() doesn't need quotes
     css = re.sub(r'url\((["\'])([^)]*)\1\)', r'url(\2)', css)

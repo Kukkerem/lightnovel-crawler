@@ -104,7 +104,7 @@ def new_version_news(latest):
     print('', Icons.RIGHT_ARROW, Style.DIM + 'Upgrade:',
           Fore.YELLOW + 'pip install -U lightnovel-crawler', Style.RESET_ALL)
 
-    if Icons.isWindows:
+    if Icons.is_windows:
         print('', Icons.RIGHT_ARROW, Style.DIM + 'Download EXE:',
               Fore.YELLOW + 'http://bit.ly/2I1XzeN', Style.RESET_ALL)
     # end if

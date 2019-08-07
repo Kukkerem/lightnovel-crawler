@@ -93,8 +93,6 @@ class RoyalRoadCrawler(Crawler):
 
         if 'Chapter' in soup.select_one('h2').text:
             chapter['title'] = soup.select_one('h2').text
-        else:
-            chapter['title'] = chapter['title']
         # end if
 
         self.blacklist_patterns = [

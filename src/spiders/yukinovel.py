@@ -72,8 +72,6 @@ class YukiNovelCrawler(Crawler):
         if contents.findAll('p')[0].text.strip().startswith('Bab'):
             chapter['title'] = contents.findAll('p')[0].text.strip()
             contents.findAll('p')[0].extract()
-        else:
-            chapter['title'] = chapter['title']
         # end if
 
         logger.debug(chapter['title'])

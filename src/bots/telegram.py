@@ -23,7 +23,6 @@ class TelegramBot:
         # Create the EventHandler and pass it your bot's token.
         self.updater = Updater(
             os.getenv('TELEGRAM_TOKEN', ''),
-            # persistence=PicklePersistence('lncrawl.botdata') # No persistency under v12.0
         )
 
         # Get the dispatcher to register handlers
@@ -169,7 +168,7 @@ class TelegramBot:
     def handle_novel_url(self, bot, update, user_data):
         if user_data.get('job'):
             app = user_data.get('app')
-            job = user_data.get('job')
+            # job = user_data.get('job')
             update.message.reply_text(
                 '%s\n'
                 '%d out of %d chapters has been downloaded.\n'
@@ -403,7 +402,7 @@ class TelegramBot:
 
     def get_novel_info(self, bot, update, user_data):
         app = user_data.get('app')
-        user = update.message.from_user
+        # user = update.message.from_user
 
         update.message.reply_text(app.crawler.novel_url)
 
@@ -439,7 +438,7 @@ class TelegramBot:
 
     def handle_delete_cache(self, bot, update, user_data):
         app = user_data.get('app')
-        user = update.message.from_user
+        # user = update.message.from_user
         text = update.message.text
         if text.startswith('No'):
             if os.path.exists(app.output_path):
@@ -644,7 +643,7 @@ class TelegramBot:
         if app:
             user_data['status'] = 'Generating output files'
             update.message.reply_text(user_data.get('status'))
-            output_files = app.bind_books()
+            app.bind_books()
             update.message.reply_text('Output files generated.')
         # end if
 

@@ -2,27 +2,27 @@
 # -*- coding: utf-8 -*-
 import platform
 
-isMac = platform.system() == 'Darwin'
-isLinux = platform.system() == 'Linux'
-isWindows = platform.system() == 'Windows'
+is_mac = platform.system() == 'Darwin'
+is_linux = platform.system() == 'Linux'
+is_windows = platform.system() == 'Windows'
 
 
 class Icons:
-    isMac = isMac
-    isLinux = isLinux
-    isWindows = isWindows
-    hasSupport = isLinux or isMac
+    is_mac = is_mac
+    is_linux = is_linux
+    is_windows = is_windows
+    has_support = is_linux or is_mac
 
     # --------------------------------------- #
 
-    BOOK = '📒' if hasSupport else ''
-    CLOVER = '🍀' if hasSupport else '#'
-    LINK = '🔗' if hasSupport else '-'
-    HANDS = '🙏' if hasSupport else '-'
-    ERROR = '❗' if hasSupport else '!'
-    PARTY = '📦' if hasSupport else '$'
-    SOUND = '🔊' if hasSupport else '<<'
-    RIGHT_ARROW = '⮕' if hasSupport else '->'
-    SPARKLE = '✨' if hasSupport else '*'
-    INFO = '🗩  ' if hasSupport else ': '
+    BOOK = '📒' if has_support else ''
+    CLOVER = '🍀' if has_support else '#'
+    LINK = '🔗' if has_support else '-'
+    HANDS = '🙏' if has_support else '-'
+    ERROR = '❗' if has_support else '!'
+    PARTY = '📦' if has_support else '$'
+    SOUND = '🔊' if has_support else '<<'
+    RIGHT_ARROW = '⮕' if has_support else '->'
+    SPARKLE = '✨' if has_support else '*'
+    INFO = '🗩  ' if has_support else ': '
 # end def

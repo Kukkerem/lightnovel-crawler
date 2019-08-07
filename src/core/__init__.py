@@ -102,7 +102,7 @@ def start_app():
 
     epilog()
 
-    # if Icons.isWindows and get_args().suppress is False:
+    # if Icons.is_windows and get_args().suppress is False:
     #     input('Press ENTER to exit...')
     # # end if
 # end def

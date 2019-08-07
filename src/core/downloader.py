@@ -45,7 +45,7 @@ def downlod_cover(app):
                 app.crawler.novel_title,
                 app.crawler.novel_author or '',
             )
-            png = svg2png(bytestring=svg, write_to=filename)
+            svg2png(bytestring=svg, write_to=filename)
             app.book_cover = filename
         except:
             logger.debug(traceback.format_exc())
