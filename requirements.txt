@@ -2,8 +2,7 @@
 python-dotenv==0.10.3
 beautifulsoup4==4.7.1
 requests==2.22.0
-racovimge==0.9
-python-slugify==3.0.2
+python-slugify==2.0.1
 cssutils==1.0.2
 PyInquirer==1.0.3
 colorama==0.4.1
@@ -20,3 +19,6 @@ CairoSVG==2.4.0
 WeasyPrint==48
 racovimge==0.9
 EbookLib==0.17.1
+Jinja2==2.10.1
+cairosvg==2.4.0
+# racovimge==0.9
