@@ -10,7 +10,6 @@ RUN pip install -r requirements_dev.txt
 
 COPY src ./src/
 COPY .env.example .env
-COPY VERSION .
 COPY __main__.py .
 
 ENTRYPOINT ["python3", "__main__.py"]
