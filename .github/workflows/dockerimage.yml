@@ -1,0 +1,32 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@master
+    - name: Build the Docker image
+      run: docker build . --file Dockerfile --tag lightnovel-crawler:latest
+    - name: Login to GitHub Package Repository
+      env:
+        GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
+      run: |
+        docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
+    - name: Tag Docker image
+      run: |
+        docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:$(date +%s)
+        docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:${GITHUB_SHA:0:39}
+    - name: Push Docker image
+      run: |
+        docker push docker.pkg.github.com/Kukkerem/lightnovel-crawler/lightnovel-crawler
+    - name: Tag latest if develop
+      if: github.ref == 'refs/heads/develop'
+      run: |
+        # we push latest separate so it shows up as latest in the UI
+        docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
+        docker push docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
