@@ -23,8 +23,8 @@ jobs:
         docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:${GITHUB_SHA:0:39}
     - name: Push Docker image
       run: |
-        docker push docker.pkg.github.com/Kukkerem/lightnovel-crawler/lightnovel-crawler
-    - name: Tag latest if develop
+        docker push docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler
+    - name: Tag latest if master
       if: github.ref == 'refs/heads/master'
       run: |
         # we push latest separate so it shows up as latest in the UI
