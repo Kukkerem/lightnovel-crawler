@@ -25,7 +25,7 @@ jobs:
       run: |
         docker push docker.pkg.github.com/Kukkerem/lightnovel-crawler/lightnovel-crawler
     - name: Tag latest if develop
-      if: github.ref == 'refs/heads/develop'
+      if: github.ref == 'refs/heads/master'
       run: |
         # we push latest separate so it shows up as latest in the UI
         docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
