@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  schedule:
+  - cron: 0 2 * * *
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v1
+    - name: Update master
+      run: |
+        curl -H 'Authorization: token $GITHUB_TOKEN' https://github.com/Kukkerem/lightnovel-crawler.git
+        git remote add upstream https://github.com/dipu-bd/lightnovel-crawler.git
+        git remote update
+        git checkout master
+        git merge upstream/master
+        git push
+      env: 
+        GITHUB_TOKEN : ${{ secrets.GITHUB_PUSH_TOKEN }}
