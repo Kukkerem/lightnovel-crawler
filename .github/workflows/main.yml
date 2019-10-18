@@ -2,7 +2,8 @@ name: Git upstream update
 
 on:
   schedule:
-  - cron: 0 2 * * *
+  #- cron: 0 2 * * *
+  - cron:  '*/15 * * * *'
 
 jobs:
   build:
