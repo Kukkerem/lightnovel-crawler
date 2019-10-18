@@ -187,7 +187,7 @@ class TelegramBot:
 
             try:
                 app.init_search()
-            except:
+            except Exception:
                 update.message.reply_text(
                     'Sorry! I only recognize these sources:\n' +
                     'https://github.com/dipu-bd/lightnovel-crawler#c3-supported-sources'
