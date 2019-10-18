@@ -14,13 +14,13 @@ jobs:
     - uses: actions/checkout@v1
     - name: Update master
       run: |
-        curl -H 'Authorization: token $GITHUB_TOKEN' https://github.com/Kukkerem/lightnovel-crawler.git
+        git remote set-url origin https://Kukkerem:$GITHUB_TOKENgithub.com/Kukkerem/lightnovel-crawler.git
         git remote add upstream https://github.com/dipu-bd/lightnovel-crawler.git
         git remote update
         git checkout --track origin/master
         git config --global user.email "kukkerem@gmail.com"
         git config --global user.name "Kukkerem"
         git merge upstream/master
-        git push
+        git push | true
       env: 
         GITHUB_TOKEN : ${{ secrets.GITHUB_PUSH_TOKEN }}
