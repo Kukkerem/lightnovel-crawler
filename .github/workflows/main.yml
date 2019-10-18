@@ -17,6 +17,8 @@ jobs:
         git remote add upstream https://github.com/dipu-bd/lightnovel-crawler.git
         git remote update
         git checkout --track origin/master
+        git config --global user.email "kukkerem@gmail.com"
+        git config --global user.name "Kukkerem"
         git merge upstream/master
         git push
       env: 
