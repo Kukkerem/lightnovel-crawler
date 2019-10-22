@@ -1,0 +1,16 @@
+version: "3.7"
+services:
+  crawler:
+    # build: .
+    image: kukker/lightnovel-crawler:arm
+    command: ["--bot", "telegram", "TELEGRAM_TOKEN=${TELEGRAM_TOKEN}"]
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+    volumes:
+      - /home/pi/Lightnovels:/Lightnovels
+    networks:
+      - net
+networks:
+  net:
