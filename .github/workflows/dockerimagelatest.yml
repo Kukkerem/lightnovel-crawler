@@ -1,0 +1,30 @@
+name: Docker Image CI
+
+on: [push]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+ 
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        version: latest
+    - name: Login to GitHub Package Repository
+      env:
+        DOCKER_HUB: ${{ secrets.DOCKER_HUB }}
+      run: |
+        docker login -u kukker -p "${DOCKER_HUB}"
+        docker pull kukker/lightnovel-crawler:latest
+    - name: Build the Docker image
+      run: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 --tag kukker/lightnovel-crawler:latest . --push
+#    - name: Push to Docker HUB
+#      if: github.ref == 'refs/heads/master'
+#      run: |
+#        docker push kukker/lightnovel-crawler:latest
+        
