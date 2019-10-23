@@ -10,19 +10,19 @@ jobs:
  
     steps:
     - uses: actions/checkout@master
-    - name: install buildx
-      run: |
-        wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-amd64
-        chmod a+x ~/.docker/cli-plugins/docker-buildx
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        version: latest
     - name: Login to GitHub Package Repository
       env:
-        DOCKER_CLI_EXPERIMENTAL: enabled
         GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
       run: |
         docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
         docker pull docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:arm || true
     - name: Build the Docker image
-      run: docker buildx build --platform=linux/arm/v7 . --file Dockerfile --tag lightnovel-crawler:arm
+      run: docker buildx build --platform linux/arm/v7 . --file Dockerfile --tag lightnovel-crawler:arm
     - name: Tag latest if master
       if: github.ref == 'refs/heads/master'
       run: |
