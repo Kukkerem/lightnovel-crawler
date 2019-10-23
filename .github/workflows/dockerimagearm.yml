@@ -16,7 +16,7 @@ jobs:
         GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
       run: |
         docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
-        docker pull docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:arm
+        docker pull docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:arm || true
     - name: Build the Docker image
       run: docker buildx build --platform=linux/arm/v7 . --file Dockerfile --tag lightnovel-crawler:arm
     - name: Tag latest if master
