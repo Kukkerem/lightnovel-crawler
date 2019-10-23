@@ -10,6 +10,11 @@ jobs:
  
     steps:
     - uses: actions/checkout@master
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        version: latest
     - name: Login to GitHub Package Repository
       env:
         GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
@@ -17,7 +22,7 @@ jobs:
         docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
         docker pull docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag lightnovel-crawler:latest
+      run: docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 . --file Dockerfile --tag lightnovel-crawler:latest
     - name: Tag Docker image
       run: |
         docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:$(date +%s)
