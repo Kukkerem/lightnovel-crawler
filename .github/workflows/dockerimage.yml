@@ -18,6 +18,7 @@ jobs:
     - name: Login to GitHub Package Repository
       env:
         GITHUB_PACKAGE_REGISTRY_TOKEN: ${{ secrets.GITHUB_PACKAGE_REGISTRY_TOKEN }}
+        DOCKER_HUB: ${{ secrets.DOCKER_HUB }}
       run: |
         docker login docker.pkg.github.com -u publisher -p "${GITHUB_PACKAGE_REGISTRY_TOKEN}"
         docker pull docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
@@ -36,3 +37,10 @@ jobs:
         # we push latest separate so it shows up as latest in the UI
         docker tag lightnovel-crawler:latest docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
         docker push docker.pkg.github.com/kukkerem/lightnovel-crawler/lightnovel-crawler:latest
+    - name: Push to Docker HUB
+      if: github.ref == 'refs/heads/master'
+      run: |
+        docker login -u kukker -p "${DOCKER_HUB}"
+        docker tag lightnovel-crawler:latest kukker/lightnovel-crawler:latest
+        docker push kukker/lightnovel-crawler:latest
+        
