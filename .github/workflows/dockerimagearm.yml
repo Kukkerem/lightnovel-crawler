@@ -10,6 +10,10 @@ jobs:
  
     steps:
     - uses: actions/checkout@master
+    - name: install buildx
+      run: |
+        wget -O ~/.docker/cli-plugins/docker-buildx https://github.com/docker/buildx/releases/download/v0.3.1/buildx-v0.3.1.linux-amd64
+        chmod a+x ~/.docker/cli-plugins/docker-buildx
     - name: Login to GitHub Package Repository
       env:
         DOCKER_CLI_EXPERIMENTAL: enabled
