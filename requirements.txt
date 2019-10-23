@@ -13,9 +13,6 @@ Jinja2==2.10.3
 cairosvg==2.4.2
 # racovimge==0.9
 
-# Dev requirements
-slackclient==2.0.1
-
 # Bot requirements
 discord.py==1.2.4
 python-telegram-bot==11.1.0
