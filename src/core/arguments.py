@@ -11,7 +11,7 @@ from ..assets.version import get_value as get_version
 
 
 class Args:
-    def __init__(self, * args, mutex: list = [], group: list = [], **kargs):
+    def __init__(self, *args, mutex: list = [], group: list = [], **kargs):
         self.args = args
         self.kargs = kargs
         self.group = group

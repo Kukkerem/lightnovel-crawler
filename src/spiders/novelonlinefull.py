@@ -78,8 +78,6 @@ class NovelOnlineFullCrawler(Crawler):
 
         if 'Chapter' in soup.select_one('h1').text:
             chapter['title'] = soup.select_one('h1').text
-        else:
-            chapter['title'] = chapter['title']
         # end if
 
         self.blacklist_patterns = [

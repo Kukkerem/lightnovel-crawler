@@ -63,7 +63,7 @@ def download_kindlegen():
             # end with
         # end with
     elif url.endswith('.tar.gz'):
-        temp_file = tempfile.mktemp('.tar.gz')
+        temp_file = tempfile.TemporaryFile('.tar.gz')
         try:
             logger.info('Writing content to %s', temp_file)
             with FileIO(temp_file, 'w') as file:
