@@ -1,6 +1,6 @@
 FROM python:3.7-alpine
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev libxml2-dev libressl-dev libxslt-dev jpeg-dev zlib-dev
+RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev libxml2-dev libressl-dev libxslt-dev jpeg-dev zlib-dev cairo
 RUN pip install pip --upgrade
 
 COPY requirements.txt /
