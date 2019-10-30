@@ -1,6 +1,26 @@
 FROM python:3.7-alpine
 
-RUN apk add --no-cache --virtual .build-deps gcc musl-dev libffi-dev libxml2-dev libressl-dev libxslt-dev jpeg-dev zlib-dev cairo
+RUN apk add --no-cache --virtual .build-deps \
+    gcc \
+    musl-dev \
+    libffi-dev \
+    libxml2-dev \
+    libressl-dev \
+    libxslt-dev \
+    # pillow dependencies
+    jpeg-dev \
+    zlib-dev \
+    freetype-dev \
+    lcms2-dev \
+    openjpeg-dev \
+    tiff-dev \
+    tk-dev \
+    tcl-dev \
+    # cairo dependencies
+    cairo-dev \
+    cairo \
+    cairo-tools
+
 RUN pip install pip --upgrade
 
 COPY requirements.txt /
