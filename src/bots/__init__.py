@@ -5,6 +5,7 @@ supported_bots = [
     'console',
     'telegram',
     'discord',
+    'slack',
     'test',
 ]
 
@@ -22,6 +23,9 @@ def run_bot(bot):
     elif bot == 'discord':
         from ..bots.discord import DiscordBot
         DiscordBot().start_bot()
+    elif bot == 'slack':
+        from ..bots.slackclient import main
+        slackclient.main()
     elif bot == 'test':
         from ..bots.test import TestBot
         TestBot().start()
