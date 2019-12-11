@@ -53,11 +53,11 @@ Also, you have to install **node.js** to access cloudflare enabled sites (e.g. h
 
 ### A1. Standalone Bundle (Windows, Linux)
 
-⏬ **Windows**: [lightnovel-crawler v2.16.2 ~ 21MB](http://bit.ly/2I1XzeN)
+⏬ **Windows**: [lightnovel-crawler v2.17.1 ~ 21MB](http://bit.ly/2I1XzeN)
 
 > In Windows 8, 10 or later versions, it might say that `lncrawl.exe` is not safe to dowload or execute. You should bypass/ignore this security check to execute this program. Actually, I am too lazy to add proper configuration files to solve this issue. Excuse me please 😇.
 
-⏬ **Linux**: [lightnovel-crawler v2.16.0 ~ 27MB](http://bit.ly/2LaB9HB)
+⏬ **Linux**: [lightnovel-crawler v2.17.0 ~ 24MB](http://bit.ly/2LaB9HB)
 
 > Copy it to `/usr/bin` or `~/.local/bin` to make it accessible in terminal. Or, you can [create a launcher](https://askubuntu.com/a/66918/457551) to easily access the app.
 
@@ -175,7 +175,7 @@ To view list of available options:
 ```bash
 $ lncrawl -h
 ================================================================================
-                           📒 Lightnovel Crawler 🍀2.16.0
+                           📒 Lightnovel Crawler 🍀2.17.0
                   https://github.com/dipu-bd/lightnovel-crawler
 --------------------------------------------------------------------------------
 usage: lncrawl [options...]
@@ -272,6 +272,7 @@ The list of currently available sources are given below:
 | https://crescentmoon.blog              |               |
 | https://id.mtlnovel.com                |       ✔       |
 | https://kisslightnovels.info           |       ✔       |
+| https://kiss-novel.com                 |               |
 | https://light-novel.online             |       ✔       |
 | https://litnet.com                     |       ✔       |
 | https://lnmtl.com                      |               |
@@ -291,12 +292,13 @@ The list of currently available sources are given below:
 | https://wordexcerpt.com                |               |
 | https://wuxiaworld.online              |       ✔       |
 | https://www.asianhobbyist.com          |               |
+| https://www.flying-lines.com           |               |
 | https://www.idqidian.us                |               |
-| https://www.jieruihao.cn               |               |
 | https://www.machine-translation.org    |       ✔       |
 | https://www.mtlnovel.com               |       ✔       |
 | https://www.novelall.com               |       ✔       |
 | https://www.novelspread.com            |               |
+| https://www.novelringan.com            |               |
 | https://www.qidian.com                 |               |
 | https://www.readlightnovel.org         |               |
 | https://www.readnovelfull.com          |       ✔       |
@@ -312,6 +314,7 @@ The list of currently available sources are given below:
 | https://www.worldnovel.online          |       ✔       |
 | https://www.wuxiaworld.co              |       ✔       |
 | https://www.wuxiaworld.com             |       ✔       |
+| https://www.wuxiaworld.site            |       ✔       |
 
 ### C4. Rejected sources
 
@@ -324,6 +327,7 @@ The list of currently available sources are given below:
 | https://indomtl.com           | `Does not like to be crawled`       |
 | https://lnindo.org            | `Does not like to be crawled`       |
 | https://novelgo.id/           | `Removed`                           |
+| https://www.jieruihao.cn      | `Unavailable`                       |
 | https://www.noveluniverse.com | `Site is down`                      |
 | https://www.novelupdates.com  | `Does not host any novels`          |
 | https://www.novelv.com        | `Site is down`                      |

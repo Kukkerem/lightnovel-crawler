@@ -10,6 +10,7 @@ from .comrademao import ComrademaoCrawler
 from .creativenovels import CreativeNovelsCrawler
 from .crescentmoon import CrescentMoonCrawler
 from .fanfiction import FanFictionCrawler
+from .flyinglines import FlyingLinesCrawler
 from .fourscanlation import FourScanlationCrawler
 from .fullnovellive import FullnovelLiveCrawler
 from .gravitytales import GravityTalesCrawler
@@ -17,6 +18,7 @@ from .idmtlnovel import IdMtlnovelCrawler
 from .idqidian import IdqidianCrawler
 from .jieruihao import JieruihaoCrawler
 from .kisslightnovels import KissLightNovels
+from .kissnovel import KissNovelCrawler
 from .lightnovelonline import LightNovelOnline
 from .litnet import LitnetCrawler
 from .lnmtl import LNMTLCrawler
@@ -32,6 +34,7 @@ from .novelgo import NovelGoCrawler
 from .novelonlinefull import NovelOnlineFullCrawler
 from .novelplanet import NovelPlanetCrawler
 from .novelraw import NovelRawCrawler
+from .novelringan import NovelRinganCrawler
 from .novelspread import NovelSpreadCrawler
 from .noveluniverse import NovelUniverseCrawler
 from .novelv import NovelvCrawler
@@ -55,6 +58,7 @@ from .worldnovelonline import WorldnovelonlineCrawler
 from .wuxiaco import WuxiaCoCrawler
 from .wuxiacom import WuxiaComCrawler
 from .wuxiaonline import WuxiaOnlineCrawler
+from .wuxiasite import WuxiaSiteCrawler
 from .yukinovel import YukiNovelCrawler
 from .zenithnovels import ZenithNovelsCrawler
 
@@ -74,6 +78,7 @@ crawler_list = {
     'https://crescentmoon.blog/': CrescentMoonCrawler,
     'https://id.mtlnovel.com/': IdMtlnovelCrawler,
     'https://kisslightnovels.info/': KissLightNovels,
+    'https://kiss-novel.com/': KissNovelCrawler,
     'https://light-novel.online/': LightNovelOnline,
     'https://litnet.com/': LitnetCrawler,
     'https://lnmtl.com/': LNMTLCrawler,
@@ -87,6 +92,7 @@ crawler_list = {
     'https://novelonlinefull.com/': NovelOnlineFullCrawler,
     'https://novelplanet.com/': NovelPlanetCrawler,
     'https://novelraw.blogspot.com/': NovelRawCrawler,
+    'https://novelringan.com/': NovelRinganCrawler,
     'https://ranobelib.me/': RanobeLibCrawler,
     'https://readnovelfull.com/': ReadNovelFullCrawler,
     'https://webnovel.online/': WebnovelOnlineCrawler,
@@ -94,9 +100,9 @@ crawler_list = {
     'https://wuxiaworld.online/': WuxiaOnlineCrawler,
     'https://www.asianhobbyist.com/': AsianHobbyistCrawler,
     'https://www.fanfiction.net/': FanFictionCrawler,
+    'https://www.flying-lines.com/': FlyingLinesCrawler,
     'https://www.idqidian.us/': IdqidianCrawler,
-    'https://www.jieruihao.cn/': JieruihaoCrawler,
-    'https://www.machine-translation.org': MachineTransOrg,
+    'https://www.machine-translation.org/': MachineTransOrg,
     'https://www.mtlnovel.com/': MtlnovelCrawler,
     'https://www.novelall.com/': NovelAllCrawler,
     'https://www.novelspread.com/': NovelSpreadCrawler,
@@ -114,6 +120,7 @@ crawler_list = {
     'https://www.worldnovel.online/': WorldnovelonlineCrawler,
     'https://www.wuxiaworld.co/': WuxiaCoCrawler,
     'https://www.wuxiaworld.com/': WuxiaComCrawler,
+    'https://wuxiaworld.site/': WuxiaSiteCrawler,
     # Do not forget to append a slash(/) at the end of the url
 }
 
@@ -130,5 +137,6 @@ rejected_sources = {
     'https://www.novelupdates.com/': 'Does not host any novels',
     'https://www.novelv.com/': 'Site is down',
     'https://yukinovel.id/': 'Removed by owner',
+    'https://www.jieruihao.cn/': 'Unavailable',
     # Do not forget to append a slash(/) at the end of the url
 }

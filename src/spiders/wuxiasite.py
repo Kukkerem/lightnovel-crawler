@@ -1,13 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+"""
+Crawler for [boxnovel.com](https://boxnovel.com/).
+"""
+import json
 import logging
+import re
 from ..utils.crawler import Crawler
 
-logger = logging.getLogger('KISSLIGHTNOVEL')
-search_url = 'https://kisslightnovels.info/?s=%s&post_type=wp-manga&author=&artist=&release='
+logger = logging.getLogger('WUXIA-SITE')
+search_url = 'https://wuxiaworld.site/?s=%s&post_type=wp-manga'
 
 
-class KissLightNovels(Crawler):
+class WuxiaSiteCrawler(Crawler):
     def search_novel(self, query):
         query = query.lower().replace(' ', '+')
         soup = self.get_soup(search_url % query)
@@ -32,33 +37,37 @@ class KissLightNovels(Crawler):
         logger.debug('Visiting %s', self.novel_url)
         soup = self.get_soup(self.novel_url)
 
-        title_tag = soup.select_one('.post-title h1')
-        for badge in title_tag.select('.manga-title-badges'):
-            badge.decompose()
-        # end for
-        self.novel_title = title_tag.text.strip()
+        self.novel_title = ' '.join([
+            str(x)
+            for x in soup.select_one('.post-title h3').contents
+            if not x.name
+        ]).strip()
         logger.info('Novel title: %s', self.novel_title)
 
         self.novel_cover = self.absolute_url(
-            soup.select_one('.summary_image a img')['data-src'])
+            soup.select_one('.summary_image img')['data-src'])
         logger.info('Novel cover: %s', self.novel_cover)
 
-        author = soup.select('.tab-summary .author-content a')
+        author = soup.find('div', {'class': 'author-content'}).findAll('a')
         if len(author) == 2:
             self.novel_author = author[0].text + ' (' + author[1].text + ')'
         else:
             self.novel_author = author[0].text
-        # end if
         logger.info('Novel author: %s', self.novel_author)
 
         chapters = soup.select('ul.main li.wp-manga-chapter a')
         chapters.reverse()
 
-        volumes = set()
         for a in chapters:
             chap_id = len(self.chapters) + 1
-            vol_id = chap_id // 100 + 1
-            volumes.add(vol_id)
+            vol_id = chap_id//100 + 1
+            if len(self.chapters) % 100 == 0:
+                vol_title = 'Volume ' + str(vol_id)
+                self.volumes.append({
+                    'id': vol_id,
+                    'title': vol_title,
+                })
+            # end if
             self.chapters.append({
                 'id': chap_id,
                 'volume': vol_id,
@@ -67,10 +76,8 @@ class KissLightNovels(Crawler):
             })
         # end for
 
-        self.volumes = [{'id': x} for x in volumes]
-
-        logger.debug('%d volumes and %d chapters found',
-                     len(self.volumes), len(self.chapters))
+        logger.debug(self.chapters)
+        logger.debug('%d chapters found', len(self.chapters))
     # end def
 
     def download_chapter_body(self, chapter):
@@ -78,26 +85,9 @@ class KissLightNovels(Crawler):
         logger.info('Downloading %s', chapter['url'])
         soup = self.get_soup(chapter['url'])
 
-        contents = soup.select_one('div.text-left')
+        contents = soup.select('div.cha-words p')
 
-        if contents.select_one('#divReadContent'):
-            chapter['title'] = contents.select_one('h4').text
-            contents = contents.select_one('#divReadContent')
-        # end if
-
-        if contents.select_one('#snippet-box'):
-            contents.select_one('#snippet-box').decompose()
-        # end if
-
-        if contents.h3:
-            contents.h3.decompose()
-        # end if
-
-        for codeblock in contents.findAll('div', {'class': 'code-block'}):
-            codeblock.decompose()
-        # end for
-
-        self.clean_contents(contents)
-        return str(contents)
+        body = [str(p) for p in contents if p.text.strip()]
+        return '<p>' + '</p><p>'.join(body) + '</p>'
     # end def
 # end class

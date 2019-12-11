@@ -8,30 +8,26 @@ import logging
 import re
 from ..utils.crawler import Crawler
 
-logger = logging.getLogger('READLIGHTNOVEL')
-search_url = 'https://www.readlightnovel.org/search/autocomplete'
+logger = logging.getLogger('NOVELRINGAN')
 
-
-class ReadLightNovelCrawler(Crawler):
+class NovelRinganCrawler(Crawler):
     def read_novel_info(self):
         '''Get novel title, autor, cover etc'''
         logger.debug('Visiting %s', self.novel_url)
         soup = self.get_soup(self.novel_url)
 
-        self.novel_title = soup.select_one('.block-title h1').text
+        self.novel_title = soup.select_one('h1.entry-title').text
         logger.info('Novel title: %s', self.novel_title)
 
         self.novel_cover = self.absolute_url(
-            soup.find('img', {'alt': self.novel_title})['src'])
+            soup.select_one('div.imgprop img')['src'])
         logger.info('Novel cover: %s', self.novel_cover)
 
-        author_link = soup.select_one("a[href*=author]")
-        if author_link:
-            self.novel_author = author_link.text.strip().title()
-        # end if
+        self.novel_author = 'Translated by novelringan.com'
         logger.info('Novel author: %s', self.novel_author)
+        
 
-        for a in soup.select('.chapters .chapter-chs li a'):
+        for a in reversed(soup.select('.bxcl ul li a')):
             chap_id = len(self.chapters) + 1
             if len(self.chapters) % 100 == 0:
                 vol_id = chap_id//100 + 1
@@ -58,21 +54,11 @@ class ReadLightNovelCrawler(Crawler):
         logger.info('Downloading %s', chapter['url'])
         soup = self.get_soup(chapter['url'])
 
-        div = soup.select_one('.chapter-content3 .desc')
-        hidden = div.select_one('#growfoodsmart')
-        if hidden:
-            hidden.decompose()
-        # end if
+        contents = soup.select('.entry-content p')
 
-        body = self.extract_contents(div)
-        if re.search(r'c?hapter .?\d+', body[0], re.IGNORECASE):
-            chapter['title'] = body[0].replace(
-                '<strong>', '').replace('</strong>', '').strip()
-            chapter['title'] = ('C' if chapter['title'].startswith(
-                'hapter') else '') + chapter['title']
-            body = body[1:]
-        # end if
+        body = [str(p) for p in contents if p.text.strip()]
 
         return '<p>' + '</p><p>'.join(body) + '</p>'
+
     # end def
 # end class
