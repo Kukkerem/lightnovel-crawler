@@ -1,5 +1,5 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+from .aixdzs import AixdzsCrawler
 from .anythingnovel import AnythingNovelCrawler
 from .asianhobbyist import AsianHobbyistCrawler
 from .babelnovel import BabelNovelCrawler
@@ -51,8 +51,9 @@ from .tapread import TapreadCrawler
 from .translateindo import TranslateIndoCrawler
 from .volarenovels import VolareNovelsCrawler
 from .wattpad import WattpadCrawler
-from .webnonline import WebnovelOnlineCrawler
 from .webnovel import WebnovelCrawler
+from .webnovelonline import WebnovelOnlineCrawler
+from .webnovelonlinecom import WebnovelOnlineDotComCrawler
 from .wordexcerpt import WordExcerptCrawler
 from .worldnovelonline import WorldnovelonlineCrawler
 from .wuxiaco import WuxiaCoCrawler
@@ -77,8 +78,8 @@ crawler_list = {
     'https://creativenovels.com/': CreativeNovelsCrawler,
     'https://crescentmoon.blog/': CrescentMoonCrawler,
     'https://id.mtlnovel.com/': IdMtlnovelCrawler,
-    'https://kisslightnovels.info/': KissLightNovels,
     'https://kiss-novel.com/': KissNovelCrawler,
+    'https://kisslightnovels.info/': KissLightNovels,
     'https://light-novel.online/': LightNovelOnline,
     'https://litnet.com/': LitnetCrawler,
     'https://lnmtl.com/': LNMTLCrawler,
@@ -96,8 +97,11 @@ crawler_list = {
     'https://ranobelib.me/': RanobeLibCrawler,
     'https://readnovelfull.com/': ReadNovelFullCrawler,
     'https://webnovel.online/': WebnovelOnlineCrawler,
+    'https://webnovelonline.com/': WebnovelOnlineDotComCrawler,
     'https://wordexcerpt.com/': WordExcerptCrawler,
     'https://wuxiaworld.online/': WuxiaOnlineCrawler,
+    'https://wuxiaworld.site/': WuxiaSiteCrawler,
+    'https://www.aixdzs.com/': AixdzsCrawler,
     'https://www.asianhobbyist.com/': AsianHobbyistCrawler,
     'https://www.fanfiction.net/': FanFictionCrawler,
     'https://www.flying-lines.com/': FlyingLinesCrawler,
@@ -120,7 +124,6 @@ crawler_list = {
     'https://www.worldnovel.online/': WorldnovelonlineCrawler,
     'https://www.wuxiaworld.co/': WuxiaCoCrawler,
     'https://www.wuxiaworld.com/': WuxiaComCrawler,
-    'https://wuxiaworld.site/': WuxiaSiteCrawler,
     # Do not forget to append a slash(/) at the end of the url
 }
 

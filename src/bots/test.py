@@ -17,10 +17,10 @@ from ..utils.cfscrape import CloudflareCaptchaError
 from ..utils.make_github_issue import find_issues, post_issue
 
 # For colorama in
-sys.stdout = io.TextIOWrapper(sys.stdout.detach(),
-                              encoding=sys.stdout.encoding,
-                              errors='ignore',
-                              line_buffering=True)
+# sys.stdout = io.TextIOWrapper(sys.stdout.detach(),
+#                               encoding=sys.stdout.encoding,
+#                               errors='ignore',
+#                               line_buffering=True)
 
 
 class TestBot:
@@ -48,6 +48,8 @@ class TestBot:
                         self.test_crawler(link, entry)
                         print()
                     except CloudflareCaptchaError:
+                        traceback.print_exc()
+                    except ConnectionError:
                         traceback.print_exc()
                     except Exception as err:
                         traceback.print_exc()
@@ -288,8 +290,8 @@ class TestBot:
             'https://meionovel.id/novel/the-legendary-mechanic/',
         ],
         'https://mtled-novels.com/': [
-            'https://mtled-novels.com/novels/ancient-demon-dragon-emperor',
-            'dragon'
+            'https://mtled-novels.com/novels/martial-god-asura/',
+            'martial'
         ],
         'https://bestlightnovel.com/': [
             'https://bestlightnovel.com/novel_888103800',
@@ -452,15 +454,21 @@ class TestBot:
         ],
         'https://www.machine-translation.org/': [
             'https://www.machine-translation.org/novel/a5eee127d75da0d2/long-live-summons.html'
-        ]
+        ],
+        'https://www.aixdzs.com/': [
+            'https://www.aixdzs.com/d/66/66746/'
+        ],
+        'https://webnovelonline.com/': [
+            'https://webnovelonline.com/novel/the_anarchic_consort'
+        ],
     }
 
     allowed_failures = [
-        'https://ranobelib.me/',
-        'https://m.chinesefantasynovels.com/',
-        'https://m.romanticlovebooks.com/',
-        'https://www.romanticlovebooks.com/',
-        'https://readnovelfull.com/',
-        'https://book.qidian.com/'
+        # 'https://ranobelib.me/',
+        # 'https://m.chinesefantasynovels.com/',
+        # 'https://m.romanticlovebooks.com/',
+        # 'https://www.romanticlovebooks.com/',
+        # 'https://readnovelfull.com/',
+        # 'https://book.qidian.com/'
     ]
 # end class

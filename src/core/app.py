@@ -128,16 +128,20 @@ class App:
         print(self.crawler.novel_url)
         self.crawler.read_novel_info()
         print('NOVEL: %s' % self.crawler.novel_title)
+        print('%d volumes and %d chapters found' %
+              (len(self.crawler.volumes), len(self.crawler.chapters)))
 
         format_novel(self.crawler)
 
-        self.good_file_name = slugify(
-            self.crawler.novel_title,
-            max_length=50,
-            separator=' ',
-            lowercase=False,
-            word_boundary=True,
-        )
+        if not self.good_file_name:
+            self.good_file_name = slugify(
+                self.crawler.novel_title,
+                max_length=50,
+                separator=' ',
+                lowercase=False,
+                word_boundary=True,
+            )
+        # end if
 
         source_name = slugify(urlparse(self.crawler.home_url).netloc)
 
