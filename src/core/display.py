@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import logging
 import os
@@ -8,7 +7,7 @@ from urllib.parse import urlparse
 from colorama import Back, Fore, Style
 
 from ..assets.icons import Icons
-from ..spiders import crawler_list
+from ..sources import crawler_list
 
 LINE_SIZE = 80
 
