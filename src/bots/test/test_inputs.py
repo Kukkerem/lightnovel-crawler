@@ -1,5 +1,7 @@
 allowed_failures = [
     'https://ranobelib.me/',
+    'https://www.aixdzs.com/',
+    'https://webnovelindonesia.com/',
 ]
 
 test_user_inputs = {
@@ -105,7 +107,6 @@ test_user_inputs = {
     ],
     'https://www.worldnovel.online/': [
         'https://www.worldnovel.online/novel/solo-leveling/',
-        'second coming of gluttony'
     ],
     'https://www.wuxiaworld.co/': [
         'https://www.wuxiaworld.co/Reincarnation-Of-The-Strongest-Sword-God/',
@@ -215,7 +216,7 @@ test_user_inputs = {
         'https://www.flying-lines.com/novel/one-useless-rebirth'
     ],
     'https://book.qidian.com/': [
-        'https://book.qidian.com/info/1010734492'
+        'https://book.qidian.com/info/1016597088'
     ],
     'https://kiss-novel.com/': [
         'https://kiss-novel.com/the-first-order'
@@ -229,7 +230,25 @@ test_user_inputs = {
     'https://webnovelonline.com/': [
         'https://webnovelonline.com/novel/the_anarchic_consort'
     ],
-    'https://4scanlation.com/tensei-shitara-slime-datta-ken-wn/': [
+    'https://4scanlation.com/': [
         'https://4scanlation.com/tensei-shitara-slime-datta-ken-wn/'
+    ],
+    'https://listnovel.com/': [
+        'https://listnovel.com/novel/my-sassy-crown-princess/'
+    ],
+    'https://tomotranslations.com/': [
+        'https://tomotranslations.com/this-hero-is-invincible-but-too-cautious/'
+    ],
+    'https://www.wuxialeague.com/': [
+        'https://www.wuxialeague.com/novel/245/'
+    ],
+    'http://liberspark.com/': [
+        'http://liberspark.com/novel/black-irons-glory'
+    ],
+    'https://webnovelindonesia.com/': [
+        'https://webnovelindonesia.com/nv/almighty-student'
+    ],
+    'https://webnovelindonesia.com/': [
+        'https://webnovelindonesia.com/nv/almighty-student'
     ],
 }

@@ -284,6 +284,7 @@ The list of currently available sources are given below:
 | Available Sources                      | Can Search | Can Login |
 | -------------------------------------- | :--------: | :-------: |
 | http://gravitytales.com                |            |           |
+| http://liberspark.com                  |            |           |
 | http://novelfull.com                   |     ✔      |           |
 | http://www.machinenoveltranslation.com |            |           |
 | http://www.tiknovel.com                |            |           |
@@ -317,6 +318,7 @@ The list of currently available sources are given below:
 | https://tomotranslations.com           |            |           |
 | https://volarenovels.com               |            |           |
 | https://webnovel.online                |            |           |
+| https://webnovelindonesia.com          |            |           |
 | https://webnovelonline.com             |            |           |
 | https://wordexcerpt.com                |            |           |
 | https://wuxiaworld.online              |     ✔      |           |
@@ -342,6 +344,7 @@ The list of currently available sources are given below:
 | https://www.wattpad.com                |            |           |
 | https://www.webnovel.com               |     ✔      |           |
 | https://www.worldnovel.online          |     ✔      |           |
+| https://www.wuxialeague.com            |            |           |
 | https://www.wuxiaworld.co              |     ✔      |           |
 | https://www.wuxiaworld.com             |     ✔      |           |
 | https://www.wuxiaworld.site            |     ✔      |           |
