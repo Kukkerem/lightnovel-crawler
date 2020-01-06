@@ -6,7 +6,8 @@ environment:
     - PYTHON: C:\Python35-x64
 
 init:
-  - SET PATH=%PYTHON%;%PATH%
+  - SET PATH=%PYTHON%;%PYTHON%\Scripts;%PATH%
+  - SET PYTHONIOENCODING=utf-8
 
 install:
   - python -m pip install -r requirements.txt
