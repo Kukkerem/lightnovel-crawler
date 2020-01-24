@@ -51,7 +51,7 @@ test_user_inputs = {
         'https://m.wuxiaworld.co/Reincarnation-Of-The-Strongest-Sword-God/',
     ],
     'http://www.tiknovel.com/': [
-        'http://www.tiknovel.com/book/index?id=3313',
+        'http://www.tiknovel.com/book/index?id=717',
     ],
     'https://www.wuxiaworld.co/': [
         'sword',
@@ -111,6 +111,9 @@ test_user_inputs = {
     'https://www.wuxiaworld.co/': [
         'https://www.wuxiaworld.co/Reincarnation-Of-The-Strongest-Sword-God/',
         'sword'
+    ],
+    'https://rewayat.club/': [
+        'https://rewayat.club/novel/almighty-sword-domain/'
     ],
     'https://www.wuxiaworld.com/': [
         'https://www.wuxiaworld.com/novel/martial-god-asura',

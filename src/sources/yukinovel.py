@@ -79,6 +79,6 @@ class YukiNovelCrawler(Crawler):
 
         logger.debug(chapter['title'])
 
-        return contents.prettify()
+        return str(contents)
     # end def
 # end class
