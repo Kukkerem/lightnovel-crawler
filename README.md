@@ -52,7 +52,7 @@ Also, you have to install **node.js** to access cloudflare enabled sites (e.g. h
 
 ### A1. Standalone Bundle (Windows, Linux)
 
-⏬ **Windows**: [lightnovel-crawler v2.19.1 ~ 21.5MB](https://rebrand.ly/lncrawl)
+⏬ **Windows**: [lightnovel-crawler v2.19.2 ~ 22MB](https://rebrand.ly/lncrawl)
 
 > In Windows 8, 10 or later versions, it might say that `lncrawl.exe` is not safe to dowload or execute. You should bypass/ignore this security check to execute this program. Actually, I am too lazy to add proper configuration files to solve this issue. Excuse me please 😇.
 
@@ -327,7 +327,6 @@ The list of currently available sources are given below:
 | https://wuxiaworld.online              |     ✔      |           |
 | https://www.aixdzs.com                 |            |           |
 | https://www.asianhobbyist.com          |            |           |
-| https://www.flying-lines.com           |            |           |
 | https://www.idqidian.us                |            |           |
 | https://www.machine-translation.org    |     ✔      |           |
 | https://www.mtlnovel.com               |     ✔      |           |
@@ -363,6 +362,8 @@ The list of currently available sources are given below:
 | https://indomtl.com           | `Does not like to be crawled`       |
 | https://lnindo.org            | `Does not like to be crawled`       |
 | https://novelgo.id/           | `Removed`                           |
+| https://novelsrock.com        | `404 - Not Found`                   |
+| https://www.flying-lines.com  | `Obfuscated content`                |
 | https://www.jieruihao.cn      | `Unavailable`                       |
 | https://www.noveluniverse.com | `Site is down`                      |
 | https://www.novelupdates.com  | `Does not host any novels`          |
