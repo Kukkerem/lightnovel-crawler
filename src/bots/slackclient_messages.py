@@ -108,14 +108,14 @@ class SlackBot:
     }
     DIVIDER_BLOCK = {"type": "divider"}
 
-    def _return_message(self, list: blocks):
+    def _return_message(self, blocks: list) -> dict:
         """Returns with a composed message dict.
-        
+
         Parameters
         ----------
         list : blocks
             [Slack block list]
-        
+
         Returns
         -------
         [dict]
