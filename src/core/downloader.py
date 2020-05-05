@@ -13,9 +13,13 @@ from PIL import Image
 from progress.bar import IncrementalBar
 
 from ..core.arguments import get_args
-from ..utils.racovimge import random_cover
 
 logger = logging.getLogger('DOWNLOADER')
+
+try:
+    from ..utils.racovimge import random_cover
+except ImportError as err:
+    logger.debug(err)
 
 try:
     from cairosvg import svg2png
@@ -119,7 +123,7 @@ def download_chapter_body(app, chapter):
         except Exception:
             logger.exception('Failed to download chapter body')
         # end try
-        if len(body) == 0:
+        if not body:
             result = 'Body is empty: ' + chapter['url']
         else:
             if not('body_lock' in chapter and chapter['body_lock']):

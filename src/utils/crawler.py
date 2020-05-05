@@ -129,7 +129,20 @@ class Crawler:
         if not page_url:
             page_url = self.last_visited_url
         # end if
-        return urljoin(page_url, url)
+        if not url or len(url) == 0:
+            return None
+        elif url.startswith('//'):
+            return self.home_url.split(':')[0] + ':' + url
+        elif url.find('//') >= 0:
+            return url
+        elif url.startswith('/'):
+            return self.home_url + url
+        elif page_url:
+            page_url = page_url.strip('/')
+            return (page_url or self.home_url) + '/' + url
+        else:
+            return url
+        # end if
     # end def
 
     def is_relative_url(self, url):
@@ -178,14 +191,15 @@ class Crawler:
         return response
     # end def
 
-    def get_soup(self, *args, parser='lxml', **kargs):
-        response = self.get_response(*args, **kargs)
-        return self.make_soup(response)
+    def get_soup(self, *args, **kwargs):
+        parser = kwargs.pop('parser', None)
+        response = self.get_response(*args, **kwargs)
+        return self.make_soup(response, parser)
     # end def
 
-    def make_soup(self, response, parser='lxml'):
+    def make_soup(self, response, parser=None):
         html = response.content.decode('utf-8', 'ignore')
-        soup = BeautifulSoup(html, parser)
+        soup = BeautifulSoup(html, parser or 'lxml')
         if not soup.find('body'):
             raise ConnectionError('HTML document was not loaded properly')
         # end if

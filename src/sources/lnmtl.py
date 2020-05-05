@@ -92,7 +92,7 @@ class LNMTLCrawler(Crawler):
             r'lnmtl\.firstResponse =',
             r'lnmtl\.volumes =',
         ]
-        for script in soup.find_all('script'):
+        for script in soup.select('script'):
             text = script.text.strip()
 
             mismatch = False
