@@ -1,4 +1,4 @@
-FROM python:3.7-alpine
+FROM python:3.8-alpine
 
 RUN apk add --no-cache --virtual .build-deps \
     gcc \
@@ -26,7 +26,7 @@ RUN pip install pip --upgrade
 COPY requirements.txt /
 RUN pip install -r requirements.txt
 
-COPY src ./src/
+COPY lncrawl ./lncrawl/
 COPY .env.example .env
 COPY __main__.py .
 
