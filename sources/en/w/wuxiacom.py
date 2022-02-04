@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import json
 import logging
 import re
 
@@ -6,52 +7,45 @@ from lncrawl.core.crawler import Crawler
 
 logger = logging.getLogger(__name__)
 
-try:
-    from google.protobuf.json_format import MessageToDict
-    from google.protobuf.message import Message
+from pyease_grpc import RpcSession
 
-    from lncrawl.utils.sonora.client import insecure_web_channel
-    from lncrawl.etc import wuxiacom_pb2 as proto
-except:
-    pass
 
 class WuxiaComCrawler(Crawler):
     base_url = ['https://www.wuxiaworld.com/']
 
     def initialize(self):
         self.home_url = 'https://www.wuxiaworld.com'
-        self.grpc = insecure_web_channel(f"https://api.wuxiaworld.com")
+        self.grpc = RpcSession.from_descriptor(WUXIWORLD_PROTO)
     # end def
 
     def read_novel_info(self):
         slug = re.findall(r'/novel/([^/]+)', self.novel_url)[0]
         logger.debug('Novel slug: %s', slug)
 
-        client = self.grpc.unary_unary(
-            '/wuxiaworld.api.v2.Novels/GetNovel',
-            request_serializer=proto.GetNovelRequest.SerializeToString,
-            response_deserializer=proto.GetNovelResponse.FromString,
+        response = self.grpc.request(
+            'https://api.wuxiaworld.com/wuxiaworld.api.v2.Novels/GetNovel',
+            {'slug': slug},
         )
-        response = client(proto.GetNovelRequest(slug=slug))
-        assert isinstance(response, Message)
-        novel = MessageToDict(response)['item']
+        response.raise_for_status()
+        assert response.single
+        novel = response.single['item']
 
         self.novel_title = novel['name']
         logger.info('Novel title = %s', self.novel_title)
         
-        self.novel_cover = novel['coverUrl']['value']
+        self.novel_cover = novel['coverUrl']
         logger.info('Novel cover = %s', self.novel_cover)
 
-        self.novel_author = novel['authorName']['value']
+        self.novel_author = novel['authorName']
         logger.info('Novel author = %s', self.novel_author)
 
-        client = self.grpc.unary_unary(
-            '/wuxiaworld.api.v2.Chapters/GetChapterList',
-            request_serializer=proto.GetChapterListRequest.SerializeToString,
-            response_deserializer=proto.GetChapterListResponse.FromString,
+        response = self.grpc.request(
+            'https://api.wuxiaworld.com/wuxiaworld.api.v2.Chapters/GetChapterList',
+            {'novelId': novel['id']},
         )
-        response = client(proto.GetChapterListRequest(novelId=novel['id']))
-        volumes = MessageToDict(response)['items']
+        response.raise_for_status()
+        assert response.single
+        volumes = response.single['items']
         
         for group in sorted(volumes, key=lambda x: x.get('order', 0)):
             vol_id = len(self.volumes) + 1
@@ -73,18 +67,24 @@ class WuxiaComCrawler(Crawler):
     # end def
 
     def download_chapter_body(self, chapter):
-        client = self.grpc.unary_unary(
-            '/wuxiaworld.api.v2.Chapters/GetChapter',
-            request_serializer=proto.GetChapterRequest.SerializeToString,
-            response_deserializer=proto.GetChapterResponse.FromString,
+        response = self.grpc.request(
+            'https://api.wuxiaworld.com/wuxiaworld.api.v2.Chapters/GetChapter',
+            {'chapterProperty': {'chapterId': chapter['entityId']}},
         )
-        property = proto.GetChapterByProperty(chapterId=chapter['entityId'])
-        response = client(proto.GetChapterRequest(chapterProperty=property))
-        chapter = MessageToDict(response)['item']
+        response.raise_for_status()
+        assert response.single
+        chapter = response.single['item']['content']
         
-        soup = self.make_soup('<main>' + chapter['content']['value'] + '</main>')
-        body = soup.find('main')
-        self.clean_contents(body)
-        return str(body)
+        # soup = self.make_soup('<main>' + chapter + '</main>')
+        # body = soup.find('main')
+        # self.clean_contents(body)
+        # chapter = str(body)
+
+        return chapter
     # end def
 # end class
+
+
+WUXIWORLD_PROTO=json.loads('''
+{"file": [{"name": "google/protobuf/wrappers.proto", "package": "google.protobuf", "messageType": [{"name": "DoubleValue", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_DOUBLE", "jsonName": "value"}]}, {"name": "FloatValue", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_FLOAT", "jsonName": "value"}]}, {"name": "Int64Value", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT64", "jsonName": "value"}]}, {"name": "UInt64Value", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT64", "jsonName": "value"}]}, {"name": "Int32Value", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "value"}]}, {"name": "UInt32Value", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_UINT32", "jsonName": "value"}]}, {"name": "BoolValue", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_BOOL", "jsonName": "value"}]}, {"name": "StringValue", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "value"}]}, {"name": "BytesValue", "field": [{"name": "value", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_BYTES", "jsonName": "value"}]}], "options": {"javaPackage": "com.google.protobuf", "javaOuterClassname": "WrappersProto", "javaMultipleFiles": true, "goPackage": "google.golang.org/protobuf/types/known/wrapperspb", "ccEnableArenas": true, "objcClassPrefix": "GPB", "csharpNamespace": "Google.Protobuf.WellKnownTypes"}, "syntax": "proto3"}, {"name": "wuxia.proto", "package": "wuxiaworld.api.v2", "dependency": ["google/protobuf/wrappers.proto"], "messageType": [{"name": "NovelChapterInfo", "field": [{"name": "firstChapter", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterItem", "jsonName": "firstChapter"}, {"name": "latestChapter", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterItem", "jsonName": "latestChapter"}, {"name": "chapterCount", "number": 3, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.Int32Value", "jsonName": "chapterCount"}, {"name": "chapterGroups", "number": 4, "label": "LABEL_REPEATED", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterGroupItem", "jsonName": "chapterGroups"}]}, {"name": "NovelItem", "field": [{"name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "id"}, {"name": "name", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "name"}, {"name": "coverUrl", "number": 10, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.StringValue", "jsonName": "coverUrl"}, {"name": "authorName", "number": 13, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.StringValue", "jsonName": "authorName"}, {"name": "chapterInfo", "number": 23, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.NovelChapterInfo", "jsonName": "chapterInfo"}]}, {"name": "ChapterItem", "field": [{"name": "entityId", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "entityId"}, {"name": "name", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "name"}, {"name": "slug", "number": 3, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "slug"}, {"name": "content", "number": 5, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.StringValue", "jsonName": "content"}, {"name": "novelId", "number": 6, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "novelId"}]}, {"name": "ChapterGroupItem", "field": [{"name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "id"}, {"name": "title", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "title"}, {"name": "order", "number": 3, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "order"}, {"name": "chapterList", "number": 6, "label": "LABEL_REPEATED", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterItem", "jsonName": "chapterList"}]}, {"name": "GetChapterByProperty", "field": [{"name": "chapterId", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "oneofIndex": 0, "jsonName": "chapterId"}, {"name": "slugs", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.GetChapterByProperty.ByNovelAndChapterSlug", "oneofIndex": 0, "jsonName": "slugs"}], "nestedType": [{"name": "ByNovelAndChapterSlug", "field": [{"name": "novelSlug", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "novelSlug"}, {"name": "chapterSlug", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "jsonName": "chapterSlug"}]}], "oneofDecl": [{"name": "byProperty"}]}, {"name": "GetNovelRequest", "field": [{"name": "id", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "oneofIndex": 0, "jsonName": "id"}, {"name": "slug", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_STRING", "oneofIndex": 0, "jsonName": "slug"}], "oneofDecl": [{"name": "selector"}]}, {"name": "GetNovelResponse", "field": [{"name": "item", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.NovelItem", "jsonName": "item"}]}, {"name": "GetChapterListRequest", "field": [{"name": "novelId", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_INT32", "jsonName": "novelId"}, {"name": "filter", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.GetChapterListRequest.FilterChapters", "jsonName": "filter"}], "nestedType": [{"name": "FilterChapters", "field": [{"name": "chapterGroupId", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.Int32Value", "jsonName": "chapterGroupId"}, {"name": "isAdvanceChapter", "number": 2, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".google.protobuf.BoolValue", "jsonName": "isAdvanceChapter"}]}]}, {"name": "GetChapterListResponse", "field": [{"name": "items", "number": 1, "label": "LABEL_REPEATED", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterGroupItem", "jsonName": "items"}]}, {"name": "GetChapterRequest", "field": [{"name": "chapterProperty", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.GetChapterByProperty", "jsonName": "chapterProperty"}]}, {"name": "GetChapterResponse", "field": [{"name": "item", "number": 1, "label": "LABEL_OPTIONAL", "type": "TYPE_MESSAGE", "typeName": ".wuxiaworld.api.v2.ChapterItem", "jsonName": "item"}]}], "service": [{"name": "Novels", "method": [{"name": "GetNovel", "inputType": ".wuxiaworld.api.v2.GetNovelRequest", "outputType": ".wuxiaworld.api.v2.GetNovelResponse"}]}, {"name": "Chapters", "method": [{"name": "GetChapterList", "inputType": ".wuxiaworld.api.v2.GetChapterListRequest", "outputType": ".wuxiaworld.api.v2.GetChapterListResponse"}, {"name": "GetChapter", "inputType": ".wuxiaworld.api.v2.GetChapterRequest", "outputType": ".wuxiaworld.api.v2.GetChapterResponse"}]}], "publicDependency": [0], "syntax": "proto3"}]}
+''')

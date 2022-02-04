@@ -1,35 +1,20 @@
 syntax = "proto3";
-
 package wuxiaworld.api.v2;
 
-/*
- * Generator:
- $ pip install protobuf grpcio grpcio-tools
- $ python -m grpc_tools.protoc -I . --python_out=. wuxiacom.proto
- */
-
-message StringValue {
-    string value = 1;
-}
-message BoolValue {
-    bool value = 1;
-}
-message Int32Value {
-    int32 value = 1;
-}
+import public "google/protobuf/wrappers.proto";
 
 message NovelChapterInfo {
     ChapterItem firstChapter = 1;
     ChapterItem latestChapter = 2;
-    Int32Value chapterCount = 3;
+    google.protobuf.Int32Value chapterCount = 3;
     repeated ChapterGroupItem chapterGroups = 4;
 }
 
 message NovelItem {
     int32 id  = 1;
     string name = 2;
-    StringValue coverUrl = 10;
-    StringValue authorName = 13;
+    google.protobuf.StringValue coverUrl = 10;
+    google.protobuf.StringValue authorName = 13;
     NovelChapterInfo chapterInfo = 23;
 }
 
@@ -37,7 +22,7 @@ message ChapterItem {
     int32 entityId = 1;
     string name = 2;
     string slug = 3;
-    StringValue content = 5;
+    google.protobuf.StringValue content = 5;
     int32 novelId = 6;
 }
 
@@ -77,8 +62,8 @@ message GetChapterListRequest {
     FilterChapters filter = 2;
 
     message FilterChapters {
-        Int32Value chapterGroupId = 1;
-        BoolValue isAdvanceChapter = 2;
+        google.protobuf.Int32Value chapterGroupId = 1;
+        google.protobuf.BoolValue isAdvanceChapter = 2;
     }
 }
 
