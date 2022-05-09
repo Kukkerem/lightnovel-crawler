@@ -37,7 +37,7 @@ class TelegramBot:
         # Create username filter
         username = os.getenv('TELEGRAM_USERNAME_FILTER', '')
         username_filter = None
-        message_filter = Filter.text
+        message_filter = Filters.text
         if f:
             username_filter = Filters.user(username)
             message_filter = message_filter and username_filter
