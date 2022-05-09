@@ -34,18 +34,27 @@ class TelegramBot:
             # persistence=PicklePersistence('lncrawl.botdata') # No persistency under v12.0
         )
 
+        # Create username filter
+        username = os.getenv('TELEGRAM_USERNAME_FILTER', '')
+        username_filter = None
+        message_filter = Filter.text
+        if f:
+            username_filter = Filters.user(username)
+            message_filter = message_filter && username_filter
+
+
         # Get the dispatcher to register handlers
         dp = self.updater.dispatcher
 
         # Add a command helper for help
-        dp.add_handler(CommandHandler('help', self.show_help))
+        dp.add_handler(CommandHandler('help', self.show_help, filters=username_filter))
 
         # Add conversation handler with states
         conv_handler = ConversationHandler(
             entry_points=[
-                CommandHandler('start', self.init_app, pass_user_data=True),
+                CommandHandler('start', self.init_app, pass_user_data=True, filters=username_filter),
                 MessageHandler(
-                    Filters.text, self.handle_novel_url, pass_user_data=True),
+                    message_filter, self.handle_novel_url, pass_user_data=True),
             ],
             fallbacks=[
                 CommandHandler('cancel', self.destroy_app,
