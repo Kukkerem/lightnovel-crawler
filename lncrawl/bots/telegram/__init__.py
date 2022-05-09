@@ -39,7 +39,7 @@ class TelegramBot:
         username_filter = None
         message_filter = Filters.text
         if username:
-            username_filter = Filters.user(username)
+            username_filter = Filters.user(username=username)
             message_filter = message_filter and username_filter
 
 
