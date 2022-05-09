@@ -40,7 +40,7 @@ class TelegramBot:
         message_filter = Filter.text
         if f:
             username_filter = Filters.user(username)
-            message_filter = message_filter && username_filter
+            message_filter = message_filter and username_filter
 
 
         # Get the dispatcher to register handlers
