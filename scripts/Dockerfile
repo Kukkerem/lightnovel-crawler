@@ -2,7 +2,7 @@ FROM python:3.10-slim-bullseye
 
 RUN apt-get update -yq \
     && apt-get install -yq \
-    wget tar xz-utils make cmake g++ libffi-dev \
+    wget tar xz-utils make cmake g++ libffi-dev libegl1 \
     libnss3 libgl1-mesa-glx libxcomposite1 libxrandr2 libxi6 fontconfig \
     && rm -rf /var/lib/apt/lists/* \
     && apt-get clean autoclean \
