@@ -219,6 +219,9 @@ class TelegramBot:
                 update.message.reply_text(
                     "Enter something again or send /cancel to stop."
                 )
+                update.message.reply_text(
+                    "You can send the novelupdates link of the novel too.",
+                )
                 return "handle_novel_url"
 
             if app.crawler:
