@@ -1,0 +1,50 @@
+[tool.poetry]
+name = "lncrawl"
+version = "0.1.0"
+description = ""
+authors = ["Zoltan Szabo <kukkerem@gmail.com>"]
+packages = [{ include = "./lncrawl" }, { include = "./sources" }]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+setuptools = ">60.0.0"
+discord-py = ">=1.0.0,<2.0.0"
+python-telegram-bot = "<12"
+ascii = "^3.6"
+regex = "^2023.8.8"
+packaging = "^23.1"
+pyease-grpc = ">=1.6.0"
+python-dotenv = ">=0.15.0,<2.0.0"
+beautifulsoup4 = ">=4.8.0,<5.0.0"
+requests = ">=2.20.0,<3.0.0"
+python-slugify = ">=4.0.0,<9.0.0"
+colorama = ">=0.4.0,<0.5.0"
+tqdm = ">=4.60,<5.0"
+js2py = ">=0.71"
+ebooklib = ">=0.17.0,<1.0.0"
+pillow = ">=6.0.0"
+cloudscraper = ">=1.2.71"
+lxml = ">=4.0.0,<5.0.0"
+questionary = ">=1.6.0"
+prompt-toolkit = ">=3.0,<4.0"
+html5lib = ">=1.1,<2.0"
+base58 = ">=2.1.1,<2.2.0"
+python-box = ">=6.0.0,<8.0.0"
+pycryptodome = ">=3.0.0,<4.0.0"
+webdriver-manager = "^4.0.0"
+selenium = ">=3.141.0"
+undetected-chromedriver = ">=3.5.3"
+readability-lxml = ">=0.8.0,<1.0.0"
+wheel = "^0.41.2"
+black = "^23.7.0"
+flake8 = "^6.1.0"
+tk-tools = "^0.16.0"
+
+[tool.poetry.dev-dependencies]
+
+[tool.poetry.scripts]
+lncrawl = "lncrawl:main"
+
+[build-system]
+requires = ["setuptools", "poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
