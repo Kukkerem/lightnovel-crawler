@@ -2,7 +2,7 @@
 name = "lncrawl"
 version = "0.1.0"
 description = ""
-authors = ["Zoltan Szabo <kukkerem@gmail.com>"]
+authors = []
 packages = [{ include = "./lncrawl" }, { include = "./sources" }]
 
 [tool.poetry.dependencies]
