@@ -38,6 +38,28 @@
   python = {
     enable = true;
     # package = pkgs.python311; # use python3.11
+    overrides = self: super: {
+      webdriver-manager = super.webdriver-manager.overridePythonAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+          self.setuptools
+        ];
+      });
+      ascii = super.ascii.overridePythonAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+          self.setuptools
+        ];
+      });
+      undetected-chromedriver = super.undetected-chromedriver.overridePythonAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+          self.setuptools
+        ];
+      });
+      ebooklib = super.ebooklib.overridePythonAttrs (old: {
+        nativeBuildInputs = (old.nativeBuildInputs or [ ]) ++ [
+          self.setuptools
+        ];
+      });
+    };
     package = config.out_lean_python;
     inject_app_env = true; # add project dependencies to dev shell (simplar to to being in an activated virtualenv)
     prefer_wheels = false; # whether to compile packages ourselves or use wheels
