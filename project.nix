@@ -16,22 +16,22 @@
   # simpliarly to .gitignore you can also exclude everything and implicitly
   # list files you want included
   src_exclude = [
-    ''
-      *
-      !/lncrawl
-      !/sources
-      !/pyproject.toml
-      !/poetry.lock
-    ''
+    # ''
+    #   *
+    #   !/lncrawl
+    #   !/sources
+    #   !/pyproject.toml
+    #   !/poetry.lock
+    # ''
   ];
 
   lean_python = {
     enable = true;
     package = pkgs.python311;
-    configd = true;
+    # configd = true;
     expat = true;
     libffi = true;
-    openssl = true;
+    # openssl = true;
     zlib = true;
   };
 
@@ -67,11 +67,12 @@
 
   docker = {
     enable = true;
+    tag = "master";
     copy_to_root = pkgs.buildEnv {
       name = "root";
       paths = [
         config.out_python
-        pkgs.busybox # only for debugging
+        # pkgs.busybox # only for debugging
       ];
       pathsToLink = [ "/bin" ];
     };
@@ -90,9 +91,71 @@
     layers = with nix2container; let
       layer-1 = buildLayer {
         deps = with pkgs; [
-          busybox
-          config.out_lean_python
+          # busybox
           tini
+          # calibre
+          config.out_lean_python
+          (calibre.overrideAttrs (oldAttrs: {
+            buildInputs = [
+              oldAttrs.fontconfig
+              oldAttrs.hunspell
+              oldAttrs.hyphen
+              oldAttrs.icu
+              oldAttrs.imagemagick
+              oldAttrs.libjpeg
+              oldAttrs.libmtp
+              oldAttrs.libpng
+              oldAttrs.libstemmer
+              oldAttrs.libuchardet
+              oldAttrs.libusb1
+              oldAttrs.podofo
+              oldAttrs.poppler_utils
+              oldAttrs.qtbase
+              oldAttrs.qtwayland
+              oldAttrs.sqlite
+              oldAttrs.xdg-utils
+            ] ++ (
+              with oldAttrs.python3Packages; [
+                (apsw.overrideAttrs (oldAttrs: {
+                  setupPyBuildFlags = [ "--enable=load_extension" ];
+                }))
+                beautifulsoup4
+                css-parser
+                cssselect
+                python-dateutil
+                dnspython
+                faust-cchardet
+                feedparser
+                html2text
+                html5-parser
+                lxml
+                markdown
+                mechanize
+                msgpack
+                netifaces
+                pillow
+                pychm
+                pyqt-builder
+                pyqt6
+                python
+                regex
+                sip
+                setuptools
+                speechd
+                zeroconf
+                jeepney
+                pycryptodome
+                odfpy
+              ]
+            );
+          }))
+          # wget
+          # gnutar
+          # xz
+          # gnumake
+          # cmake
+          # libffi
+          # fontconfig
         ];
       };
       layer-2 = buildLayer {
@@ -110,6 +173,15 @@
 
   # packages that should be available in dev shell
   dev_commands = with pkgs; [
-    dive
+    # dive
+    nix-tree
+    calibre
+    # wget
+    # gnutar
+    # xz
+    # gnumake
+    # cmake
+    # libffi
+    # fontconfig
   ];
 }
