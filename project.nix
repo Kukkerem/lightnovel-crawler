@@ -65,6 +65,8 @@
     prefer_wheels = false; # whether to compile packages ourselves or use wheels
   };
 
+  # nix run .#docker.copyToPodman
+  # podman run -it -e LOG_LEVEL=DEBUG -v Lightnovels:/Lightnovels docker.io/library/lightnovel-crawler:master
   docker = {
     enable = true;
     tag = "master";
@@ -101,69 +103,61 @@
         deps = with pkgs; [
           # busybox
           tini
-          # calibre
           config.out_lean_python
-          (calibre.overrideAttrs (oldAttrs: {
-            buildInputs = [
-              fontconfig
-              hunspell
-              hyphen
-              icu
-              imagemagick
-              libjpeg
-              libmtp
-              libpng
-              libstemmer
-              libuchardet
-              libusb1
-              podofo
-              poppler_utils
-              # qt6.qtbase
-              # qt6.qtwayland
-              sqlite
-              xdg-utils
-            ] ++ (
-              with python3Packages; [
-                (apsw.overrideAttrs (oldAttrs: {
-                  setupPyBuildFlags = [ "--enable=load_extension" ];
-                }))
-                beautifulsoup4
-                css-parser
-                cssselect
-                python-dateutil
-                dnspython
-                faust-cchardet
-                feedparser
-                html2text
-                html5-parser
-                lxml
-                markdown
-                mechanize
-                msgpack
-                netifaces
-                pillow
-                pychm
-                pyqt-builder
-                pyqt6
-                python
-                regex
-                sip
-                setuptools
-                # speechd
-                zeroconf
-                jeepney
-                pycryptodome
-                odfpy
-              ]
-            );
-          }))
-          # wget
-          # gnutar
-          # xz
-          # gnumake
-          # cmake
-          # libffi
-          # fontconfig
+          # (calibre.overrideAttrs (oldAttrs: {
+          #   buildInputs = [
+          #     fontconfig
+          #     hunspell
+          #     hyphen
+          #     icu
+          #     imagemagick
+          #     libjpeg
+          #     libmtp
+          #     libpng
+          #     libstemmer
+          #     libuchardet
+          #     libusb1
+          #     podofo
+          #     poppler_utils
+          #     # qt6.qtbase
+          #     # qt6.qtwayland
+          #     sqlite
+          #     xdg-utils
+          #   ] ++ (
+          #     with python3Packages; [
+          #       (apsw.overrideAttrs (oldAttrs: {
+          #         setupPyBuildFlags = [ "--enable=load_extension" ];
+          #       }))
+          #       beautifulsoup4
+          #       css-parser
+          #       cssselect
+          #       python-dateutil
+          #       dnspython
+          #       faust-cchardet
+          #       feedparser
+          #       html2text
+          #       html5-parser
+          #       lxml
+          #       markdown
+          #       mechanize
+          #       msgpack
+          #       netifaces
+          #       pillow
+          #       pychm
+          #       pyqt-builder
+          #       pyqt6
+          #       python
+          #       regex
+          #       sip
+          #       setuptools
+          #       # speechd
+          #       zeroconf
+          #       jeepney
+          #       pycryptodome
+          #       odfpy
+          #     ]
+          #   );
+          # }))
         ];
       };
       layer-2 = buildLayer {

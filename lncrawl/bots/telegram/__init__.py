@@ -38,7 +38,7 @@ class TelegramBot:
         # Build the Application and with bot's token.
         TOKEN = os.getenv("TELEGRAM_TOKEN", "")
         self.application = Application.builder().token(TOKEN).build()
-        
+
         # Add a command helper for help
         self.application.add_handler(CommandHandler("help", self.show_help))
 
