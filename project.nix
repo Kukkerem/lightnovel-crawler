@@ -31,7 +31,7 @@
     # configd = true;
     expat = true;
     libffi = true;
-    # openssl = true;
+    openssl = true;
     zlib = true;
   };
 
@@ -84,10 +84,18 @@
     # call /bin/hello when running the container
     command = [ "${config.out_python}/bin/lncrawl" ];
 
+
+    volumes = [
+      "/.lncrawl"
+      "/tmp"
+      # "/Lightnovels"
+    ];
+
     # organize the container into 3 layers:
     # - base layer with pythoni, busybox & tini
     # - layer with application dependencies
     # - our application
+    # nix-tree --derivation '.#docker'
     layers = with nix2container; let
       layer-1 = buildLayer {
         deps = with pkgs; [
@@ -97,25 +105,25 @@
           config.out_lean_python
           (calibre.overrideAttrs (oldAttrs: {
             buildInputs = [
-              oldAttrs.fontconfig
-              oldAttrs.hunspell
-              oldAttrs.hyphen
-              oldAttrs.icu
-              oldAttrs.imagemagick
-              oldAttrs.libjpeg
-              oldAttrs.libmtp
-              oldAttrs.libpng
-              oldAttrs.libstemmer
-              oldAttrs.libuchardet
-              oldAttrs.libusb1
-              oldAttrs.podofo
-              oldAttrs.poppler_utils
-              oldAttrs.qtbase
-              oldAttrs.qtwayland
-              oldAttrs.sqlite
-              oldAttrs.xdg-utils
+              fontconfig
+              hunspell
+              hyphen
+              icu
+              imagemagick
+              libjpeg
+              libmtp
+              libpng
+              libstemmer
+              libuchardet
+              libusb1
+              podofo
+              poppler_utils
+              # qt6.qtbase
+              # qt6.qtwayland
+              sqlite
+              xdg-utils
             ] ++ (
-              with oldAttrs.python3Packages; [
+              with python3Packages; [
                 (apsw.overrideAttrs (oldAttrs: {
                   setupPyBuildFlags = [ "--enable=load_extension" ];
                 }))
@@ -141,7 +149,7 @@
                 regex
                 sip
                 setuptools
-                speechd
+                # speechd
                 zeroconf
                 jeepney
                 pycryptodome
