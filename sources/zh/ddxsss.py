@@ -13,29 +13,43 @@ logger = logging.getLogger(__name__)
 class DdxSss(Crawler):
     base_url = [
         "https://www.ddxss.cc/",
-    ]
-    # custom banned text as it's all loose and the cleaner deletes the whole chapter if used in bad_text_*
-    banned_text = [
-        "请收藏本站：https://www.ddxsss.com。顶点小说手机版：https://m.ddxsss.com",
+        "https://www.ddtxt8.cc/",
     ]
 
     def initialize(self):
+        self.init_executor(ratelimit=20)
+
         # the default lxml parser cannot handle the huge gbk encoded sites (fails after 4.3k chapters)
         self.init_parser("html.parser")
         self.cleaner.bad_tags.update(["script", "a"])
-        self.cleaner.bad_css.update([
-            ".noshow",
-            "div.Readpage.pagedown",
-        ])
+        self.cleaner.bad_css.update(
+            [
+                ".noshow",
+                "div.Readpage.pagedown",
+            ]
+        )
+
+        # p tags should only show up after being parsed and formatted the first time
+        self.cleaner.bad_tag_text_pairs["p"] = [
+            "请收藏本站：",
+            "顶点小说手机版：",
+            "您可以在百度里搜索",
+            "最新章节地址：",
+            "全文阅读地址：",
+            "txt下载地址：",
+            "手机阅读：",
+            '为了方便下次阅读，你可以点击下方的"收藏"记录本次',
+            "请向你的朋友（QQ、博客、微信等方式）推荐本书，谢谢您的支持！！",
+        ]
 
     def search_novel(self, query):
         data = self.get_json(
             f"{self.home_url}user/search.html?q={query}",
             # if this cookie "expires" it might return INT results again -> maybe remove search functionality
-            cookies={"hm": "7c2cee175bfbf597f805ebc48957806e"}
+            cookies={"hm": "7c2cee175bfbf597f805ebc48957806e"},
         )
         if isinstance(data, int):
-            logger.warning("Failed to get any results, likely auth failure")
+            logger.info("Failed to get any results, likely auth failure")
             return []
 
         results = []
@@ -44,7 +58,7 @@ class DdxSss(Crawler):
                 SearchResult(
                     title=book["articlename"],
                     url=self.absolute_url(book["url_list"]),
-                    info=f"Author: {book['author']} | Synopsis: {book['intro']}"
+                    info=f"Author: {book['author']} | Synopsis: {book['intro']}",
                 )
             )
         return results
@@ -66,7 +80,7 @@ class DdxSss(Crawler):
             self.novel_cover = self.absolute_url(possible_image["src"])
         logger.info("Novel cover: %s", self.novel_cover)
 
-        possible_author = meta.find('.small span', text=r"作者：")
+        possible_author = meta.find(".small span", text=r"作者：")
         if isinstance(possible_author, Tag):
             self.novel_author = possible_author.text.strip().replace("作者：", "")
         logger.info("Novel Author: %s", self.novel_author)
@@ -84,13 +98,15 @@ class DdxSss(Crawler):
                 logger.info("Skipping non-chapter link: %s", a["href"])
                 continue
 
-            chap_id = int(re.match(re.compile(f".*/book/{book_id}/(\\d+).*"), a["href"])[1])
+            chap_id = int(
+                re.match(re.compile(f".*/book/{book_id}/(\\d+).*"), a["href"])[1]
+            )
             vol_id = len(self.chapters) // 100 + 1
             if len(self.chapters) % 100 == 0:
                 self.volumes.append(Volume(vol_id))
             if not a:
                 # this should not occur with html.parser, if it does, likely due to parser/encoding issue
-                logger.warning("Failed to get Chapter %d! Missing Link", chap_id)
+                logger.info("Failed to get Chapter %d! Missing Link", chap_id)
                 continue
             self.chapters.append(
                 Chapter(
@@ -105,9 +121,9 @@ class DdxSss(Crawler):
         soup = self.get_soup(chapter.url, encoding="utf-8")
         contents = soup.select_one("div#chaptercontent")
         text = self.cleaner.extract_contents(contents)
-        for bad_text in self.banned_text:
-            text = text.replace(bad_text, "")
         # chapter title is usually present but without space between chapter X and the title
         text = text.replace(chapter.title, "")
         text = text.replace(chapter.title.replace(" ", ""), "")
+        # remove paragraphs with bad text after parsing linebreaks
+        text = self.cleaner.extract_contents(self.make_soup(text))
         return text
