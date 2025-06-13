@@ -21,6 +21,7 @@ from .exeptions import ScraperErrorGroup
 from .novel_info import format_novel, save_metadata
 from .novel_search import search_novels
 from .scraper import Scraper
+from .sources import rejected_sources
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ class App:
         self.pack_by_volume = False
         self.chapters: List[Chapter] = []
         self.book_cover: Optional[str] = None
-        self.output_formats: Dict[OutputFormat, bool] = {}
+        self.output_formats: Dict[str, bool] = {}
         self.archived_outputs = None
         self.good_file_name: str = ""
         self.no_suffix_after_filename = False
@@ -57,6 +58,7 @@ class App:
         logger.info("Initialized App")
 
     def destroy(self):
+        atexit.unregister(self.destroy)
         if self.crawler:
             self.crawler.__del__()
         self.chapters.clear()
@@ -80,6 +82,7 @@ class App:
                 for link, crawler in crawler_list.items()
                 if crawler.search_novel != Crawler.search_novel
                 and link.startswith("http")
+                and link not in rejected_sources
             ]
 
     def guess_novel_title(self, url: str) -> str:
@@ -149,7 +152,7 @@ class App:
             )
 
         source_name = slugify(urlparse(self.crawler.home_url).netloc)
-        self.output_path = (
+        self.output_path = str(
             Path(C.DEFAULT_OUTPUT_PATH) / source_name / self.good_file_name
         )
 
@@ -209,9 +212,9 @@ class App:
         logger.info("Compressing output...")
 
         # Get which paths to be archived with their base names
-        path_to_process: List[tuple[Path, str]] = []
+        path_to_process = []
         for fmt in available_formats:
-            root_dir: Path = Path(self.output_path) / fmt
+            root_dir = Path(self.output_path) / fmt
             if root_dir.is_dir():
                 path_to_process.append(
                     (root_dir, self.good_file_name + " (" + fmt + ")")

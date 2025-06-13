@@ -1,12 +1,14 @@
+import atexit
 import logging
 import os
 from abc import ABC
-from concurrent.futures import Future, ThreadPoolExecutor
+from concurrent.futures import Future, ThreadPoolExecutor, as_completed
 from threading import Semaphore, Thread
 from typing import Any, Dict, Generator, Iterable, List, Optional
 
 from tqdm import tqdm
 
+from .exeptions import LNException
 from ..utils.ratelimit import RateLimiter
 
 logger = logging.getLogger(__name__)
@@ -33,11 +35,7 @@ class TaskManager(ABC):
         self.init_executor(workers, ratelimit)
 
     def __del__(self) -> None:
-        if hasattr(self, "_executor"):
-            self._submit = None
-            self._executor.shutdown(wait=False)
-        if hasattr(self, "_limiter"):
-            self._limiter.shutdown()
+        self.shutdown()
 
     @property
     def executor(self) -> ThreadPoolExecutor:
@@ -50,6 +48,13 @@ class TaskManager(ABC):
     @property
     def workers(self):
         return self._executor._max_workers
+
+    def shutdown(self, wait=False):
+        if hasattr(self, "_executor"):
+            self._submit = None
+            self._executor.shutdown(wait)
+        if hasattr(self, "_limiter"):
+            self._limiter.shutdown()
 
     def init_executor(
         self,
@@ -99,13 +104,12 @@ class TaskManager(ABC):
         self._futures.append(future)
         return future
 
+    @staticmethod
     def progress_bar(
-        self,
         iterable: Optional[Iterable] = None,
         unit: Optional[str] = None,
         desc: Optional[str] = None,
         total: Optional[float] = None,
-        timeout: Optional[float] = None,
         disable: bool = False,
     ) -> tqdm:
         if os.getenv("debug_mode"):
@@ -114,7 +118,7 @@ class TaskManager(ABC):
         if not disable:
             # Since we are showing progress bar, it is not good to
             # resolve multiple list of futures at once
-            if not _resolver.acquire(True, timeout):
+            if not _resolver.acquire(True, 30):
                 pass
 
         bar = tqdm(
@@ -126,8 +130,10 @@ class TaskManager(ABC):
         )
 
         original_close = bar.close
+        atexit.register(original_close)
 
         def extended_close() -> None:
+            atexit.unregister(original_close)
             if not bar.disable:
                 _resolver.release()
             original_close()
@@ -169,7 +175,6 @@ class TaskManager(ABC):
     def resolve_as_generator(
         self,
         futures: Iterable[Future],
-        timeout: Optional[float] = None,
         disable_bar: bool = False,
         desc: Optional[str] = None,
         unit: Optional[str] = None,
@@ -186,24 +191,30 @@ class TaskManager(ABC):
             unit: The progress unit name
             fail_fast: Fail on first error
         """
+        futures = list(futures)
+        if not futures:
+            yield from ()
+            return
+
         bar = self.progress_bar(
-            futures,
+            total=len(futures),
             desc=desc,
             unit=unit,
-            timeout=timeout,
             disable=disable_bar,
         )
         try:
-            for step in bar:
-                future: Future = step
+            for future in as_completed(futures):
                 if fail_fast:
-                    yield future.result(timeout)
+                    yield future.result()
                     bar.update()
                     continue
                 try:
-                    yield future.result(timeout)
+                    yield future.result()
                 except KeyboardInterrupt:
                     raise
+                except LNException as e:
+                    bar.clear()
+                    print(str(e))
                 except Exception as e:
                     yield None
                     if bar.disable:
@@ -217,13 +228,11 @@ class TaskManager(ABC):
             raise
         finally:
             Thread(target=lambda: self.cancel_futures(futures)).start()
-            yield from ()
             bar.close()
 
     def resolve_futures(
         self,
         futures: Iterable[Future],
-        timeout: Optional[float] = None,
         disable_bar: bool = False,
         desc: Optional[str] = None,
         unit: Optional[str] = None,
@@ -244,7 +253,6 @@ class TaskManager(ABC):
         return list(
             self.resolve_as_generator(
                 futures=futures,
-                timeout=timeout,
                 disable_bar=disable_bar,
                 desc=desc,
                 unit=unit,

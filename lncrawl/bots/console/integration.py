@@ -1,4 +1,6 @@
+import atexit
 import logging
+import sys
 from urllib.parse import urlparse
 
 from questionary import prompt
@@ -9,16 +11,34 @@ from ...core.arguments import get_args
 from ...core.crawler import Crawler
 from ...core.exeptions import LNException
 from ...core.sources import crawler_list, prepare_crawler, rejected_sources
+from ...utils.platforms import Platform
 from .open_folder_prompt import display_open_folder
 from .resume_download import resume_session
 
 logger = logging.getLogger(__name__)
 
 
+def confirm_exit():
+    try:
+        input("Press ENTER to exit...")
+    except KeyboardInterrupt:
+        pass
+    except EOFError:
+        pass
+
+
 def start(self):
     from . import ConsoleBot
-
     assert isinstance(self, ConsoleBot)
+
+    if (
+        getattr(sys, "frozen", False)
+        and hasattr(sys, "_MEIPASS")
+        and Platform.windows
+        and not get_args().close_directly
+    ):
+        atexit.register(confirm_exit)
+    atexit.register(display.epilog)
 
     args = get_args()
     if args.list_sources:
@@ -102,13 +122,16 @@ def start(self):
         try:
             _download_novel()
             break
+        except KeyboardInterrupt:
+            break
         except LNException as e:
             raise e
         except Exception as e:
             if not self.search_mode:
                 raise e
             elif not self.confirm_retry():
-                raise LNException("Cancelled by user") from e
+                display.error_message(LNException, "Cancelled by user", e.__traceback__)
+                sys.exit(0)
 
     self.app.start_download()
     self.app.bind_books()

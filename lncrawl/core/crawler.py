@@ -21,6 +21,9 @@ class Crawler(Scraper):
     has_mtl = False
     language = ""
 
+    is_disabled = False
+    disable_reason: Optional[str] = None
+
     # ------------------------------------------------------------------------- #
     # Constructor & Destructors
     # ------------------------------------------------------------------------- #
@@ -170,5 +173,4 @@ class Crawler(Scraper):
                 chapter.success = bool(result)
             except KeyboardInterrupt:
                 break
-            finally:
-                yield chapter
+            yield chapter

@@ -80,6 +80,7 @@ def __download_data(url: str) -> bytes:
 # Checking Updates
 # --------------------------------------------------------------------------- #
 
+
 __index_fetch_internval_in_seconds = 30 * 60
 __master_index_file_url = "https://raw.githubusercontent.com/dipu-bd/lightnovel-crawler/master/sources/_index.json"
 
@@ -88,6 +89,11 @@ __local_data_path = Path(__file__).parent.parent.absolute()
 if not (__local_data_path / "sources").is_dir():
     __local_data_path = __local_data_path.parent
 
+__is_dev_mode = (
+    os.getenv("LNCRAWL_MODE") == "dev"
+    or (__local_data_path / ".git" / "HEAD").exists()
+)
+
 __current_index = {}
 __latest_index = {}
 
@@ -95,7 +101,7 @@ __latest_index = {}
 def __load_current_index():
     try:
         index_file = __user_data_path / "sources" / "_index.json"
-        if not index_file.is_file():
+        if __is_dev_mode or not index_file.is_file():
             index_file = __local_data_path / "sources" / "_index.json"
 
         if not index_file.is_file():
@@ -143,7 +149,6 @@ def __load_latest_index():
 
 
 def __check_updates():
-    __load_current_index()
     __load_latest_index()
 
     latest_app_version = __latest_index["app"]["version"]
@@ -155,18 +160,10 @@ def __check_updates():
     __current_index["rejected"] = __latest_index["rejected"]
     __save_current_index()
 
-    for url, reason in __current_index["rejected"].items():
-        no_www = url.replace("://www.", "://")
-        rejected_sources[url] = reason
-        rejected_sources[no_www] = reason
-        rejected_sources[urlparse(url).hostname] = reason
-        rejected_sources[urlparse(no_www).hostname] = reason
-
 
 # --------------------------------------------------------------------------- #
 # Downloading sources
 # --------------------------------------------------------------------------- #
-
 
 def __save_source_data(source_id: str, data: bytes):
     latest = __latest_index["crawlers"][source_id]
@@ -238,9 +235,19 @@ __cache_crawlers: Dict[Path, List[Type[Crawler]]] = {}
 __url_regex = re.compile(r"^^(https?|ftp)://[^\s/$.?#].[^\s]*$", re.I)
 
 
-def __import_crawlers(file_path: Path) -> List[Type[Crawler]]:
-    if file_path in __cache_crawlers:
-        return __cache_crawlers[file_path]
+def __load_rejected_sources():
+    for url, reason in __current_index["rejected"].items():
+        no_www = url.replace("://www.", "://")
+        rejected_sources[url] = reason
+        rejected_sources[no_www] = reason
+        rejected_sources[urlparse(url).hostname] = reason
+        rejected_sources[urlparse(no_www).hostname] = reason
+
+
+def __import_crawlers(file_path: Path, no_cache=False) -> List[Type[Crawler]]:
+    if not no_cache:
+        if file_path in __cache_crawlers:
+            return __cache_crawlers[file_path]
 
     if not file_path.is_file():
         raise LNException("Invalid crawler file path")
@@ -293,11 +300,12 @@ def __import_crawlers(file_path: Path) -> List[Type[Crawler]]:
 
         crawlers.append(crawler)
 
-    __cache_crawlers[file_path] = crawlers
+    if not no_cache:
+        __cache_crawlers[file_path] = crawlers
     return crawlers
 
 
-def __add_crawlers_from_path(path: Path):
+def __add_crawlers_from_path(path: Path, no_cache=False):
     if path.name.startswith("_") or not path.name[0].isalnum():
         return
 
@@ -307,11 +315,11 @@ def __add_crawlers_from_path(path: Path):
 
     if path.is_dir():
         for py_file in path.glob("**/*.py"):
-            __add_crawlers_from_path(py_file)
+            __add_crawlers_from_path(py_file, no_cache)
         return
 
     try:
-        crawlers = __import_crawlers(path)
+        crawlers = __import_crawlers(path, no_cache)
         for crawler in crawlers:
             setattr(crawler, "file_path", str(path.absolute()))
             base_urls: list[str] = getattr(crawler, "base_url")
@@ -332,21 +340,17 @@ def __add_crawlers_from_path(path: Path):
 # --------------------------------------------------------------------------- #
 # Public methods
 # --------------------------------------------------------------------------- #
-
 sources_path = (__local_data_path / "sources").absolute()
 
 
 def load_sources():
-    __is_dev_mode = (
-        os.getenv("LNCRAWL_MODE") == "dev"
-        or (__local_data_path / ".git" / "HEAD").exists()
-    )
-
+    __load_current_index()
     if not __is_dev_mode:
         __check_updates()
         __download_sources()
         __save_current_index()
 
+    __load_rejected_sources()
     __add_crawlers_from_path(__local_data_path / "sources")
 
     if not __is_dev_mode:
@@ -360,16 +364,16 @@ def load_sources():
         __add_crawlers_from_path(Path(crawler_file))
 
 
-def prepare_crawler(url: str) -> Optional[Crawler]:
-    if not url:
-        return None
-
+def prepare_crawler(url: str, crawler_file: Optional[str] = None) -> Crawler:
     parsed_url = urlparse(url)
     hostname = parsed_url.hostname
     if not hostname:
-        return None
+        raise LNException("No crawler defined for empty hostname")
 
-    home_url = f"{parsed_url.scheme}://{hostname}/"
+    if crawler_file:
+        __load_current_index()
+        __load_rejected_sources()
+        __add_crawlers_from_path(Path(crawler_file), True)
 
     if hostname in rejected_sources:
         raise LNException("Source is rejected. Reason: " + rejected_sources[hostname])
@@ -377,6 +381,8 @@ def prepare_crawler(url: str) -> Optional[Crawler]:
     CrawlerType = crawler_list.get(hostname)
     if not CrawlerType:
         raise LNException("No crawler found for " + hostname)
+
+    home_url = f"{parsed_url.scheme}://{hostname}/"
 
     logger.info(
         f"Initializing crawler for: {home_url} [%s]",
