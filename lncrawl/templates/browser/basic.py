@@ -1,6 +1,7 @@
 import logging
 from abc import abstractmethod
 from io import BytesIO
+from threading import Event
 from typing import Generator, List, Optional
 
 from PIL import Image
@@ -36,9 +37,9 @@ class BasicBrowserTemplate(Crawler):
     def using_browser(self) -> bool:
         return hasattr(self, "_browser") and self._browser.active
 
-    def __del__(self) -> None:
+    def close(self) -> None:
         self.close_browser()
-        super().__del__()
+        super().close()
 
     @property
     def browser(self) -> "Browser":
@@ -103,29 +104,31 @@ class BasicBrowserTemplate(Crawler):
         self,
         chapters: List[Chapter],
         fail_fast=False,
+        signal=Event(),
     ) -> Generator[Chapter, None, None]:
+        yield from ()  # start generator
+
         # Try to use scraper first (since it is faster)
         try:
+            def _downloader(chapter: Chapter):
+                chapter.body = ""
+                chapter.images = {}
+                chapter.body = self.download_chapter_body_in_soup(chapter)
+                self.extract_chapter_images(chapter)
+                chapter.success = bool(chapter.body)
+                return chapter
+
             futures = [
-                self.executor.submit(self.download_chapter_body_in_soup, chapter)
+                self.executor.submit(_downloader, chapter)
                 for chapter in chapters
             ]
-            generator = self.resolve_as_generator(
+            yield from self.resolve_as_generator(
                 futures,
                 desc="Chapters",
                 unit="item",
                 fail_fast=True,
+                signal=signal
             )
-            for index, result in enumerate(generator):
-                try:
-                    chapter = chapters[index]
-                    chapter.body = result
-                    self.extract_chapter_images(chapter)
-                    chapter.success = True
-                except KeyboardInterrupt:
-                    return  # failed
-                finally:
-                    yield chapter
             return  # successfully downloaded all the chapters
         except ScraperErrorGroup as e:
             if logger.isEnabledFor(logging.DEBUG):
@@ -134,9 +137,13 @@ class BasicBrowserTemplate(Crawler):
         # Download the remaining ones in either scraper or browser if failed
         remaining = filter(lambda x: not x.get("success"), chapters)
         for chapter in self.progress_bar(remaining, desc="Chapters", unit="item"):
+            if signal.is_set():
+                return  # canceled
+            assert isinstance(chapter, Chapter)
             chapter.body = ""
             chapter.images = {}
             try:
+                print(chapter.id, chapter.body[:50])
                 chapter.body = self.download_chapter_body(chapter)
                 self.extract_chapter_images(chapter)
                 chapter.success = True
@@ -148,7 +155,6 @@ class BasicBrowserTemplate(Crawler):
                     raise e
             finally:
                 yield chapter
-
         self.close_browser()
 
     def download_chapter_body(self, chapter: Chapter) -> str:

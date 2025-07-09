@@ -37,7 +37,8 @@ class ChereadsCrawler(Crawler):
 
         book_id = str(book_info.bookId)
         cover_base_url = 'https://book-pic.webnovel.com/1001/bookcover/'
-        self.novel_cover = f'{cover_base_url}{book_id}'
+        cover_params = '?imageMogr2/thumbnail/2000,2000/quality/95/strip'
+        self.novel_cover = f'{cover_base_url}{book_id}{cover_params}'
 
         self.novel_title = str(book_info.bookName)
         self.novel_author = str(book_info.authorName)
@@ -70,8 +71,8 @@ class ChereadsCrawler(Crawler):
         contents = metadata.pageProps.pageData.chapterInfo.contents
 
         paras = [str(item.content) for item in contents]
-        if re.match(r'<p>[Cc]h(ap(ter)?)?.\d+', paras[0]):
-            chapter.title = paras[0][3:-4]
+        if re.match(r'<p>[^Cc]*[Cc]h(ap(ter)?)?.\d+', paras[0]):
+            chapter.title = paras[0][3:-4].strip('*')
             paras = paras[1:]
 
         return "".join(paras)
